@@ -1,0 +1,24 @@
+{
+  "user_list": [
+    {
+      "id": 1,
+      "fullname": "Huseyn Ibrahimov"
+    },
+    {
+      "id": 2,
+      "fullname": "Sadiq Shabanov"
+    },
+    {
+      "id": 3,
+      "fullname": "Murad Ibrahimov"
+    },
+    {
+      "id": 1690388999217,
+      "fullname": "Rufet Rzayev"
+    },
+    {
+      "id": 1690389098518,
+      "fullname": "Royal Shahbazov"
+    }
+  ]
+}
