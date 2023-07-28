@@ -7,9 +7,9 @@ import axios from 'axios'
 function Header() {
 
     const addUser = () => {
-        axios.post("http://localhost:3000/user_list", {
+        axios.post("http://localhost:3000/users", {
             id: Date.now(),
-            fullname: "Royal Shahbazov"
+            fullname: "Rufet Rzayev"
         }).then(res => {
             console.log("new user resp", res);
         })

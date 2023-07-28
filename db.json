@@ -1,24 +1,16 @@
 {
-  "user_list": [
+  "users": [
     {
-      "id": 1,
-      "fullname": "Huseyn Ibrahimov"
+      "id": 1690560299392,
+      "fullname": "Pervin Pashazade"
     },
     {
-      "id": 2,
-      "fullname": "Sadiq Shabanov"
+      "id": 1690562018930,
+      "fullname": "Bulud Pashazade"
     },
     {
-      "id": 3,
-      "fullname": "Murad Ibrahimov"
-    },
-    {
-      "id": 1690388999217,
+      "id": 1690562324162,
       "fullname": "Rufet Rzayev"
-    },
-    {
-      "id": 1690389098518,
-      "fullname": "Royal Shahbazov"
     }
   ]
 }
