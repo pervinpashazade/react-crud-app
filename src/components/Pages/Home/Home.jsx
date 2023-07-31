@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import ProCard from '../../Lib/ProCard'
-import { Alert, Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap'
+import {
+    Alert,
+    Button,
+    Form,
+    Input,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Table
+} from 'reactstrap'
 import axios from 'axios'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
-import 'sweetalert2/src/sweetalert2.scss'
+import { toast } from 'react-toastify'
+import { apiUrl, toast_config } from '../../../config'
 
 function Home() {
 
@@ -30,7 +41,7 @@ function Home() {
         }).then((result) => {
             console.log("sweetalert result", result);
             if (result.isConfirmed) {
-                axios.delete(`http://localhost:3000/users/${id}`)
+                axios.delete(`${apiUrl}/users/${id}`)
                     .then(resp => {
                         if (resp.status === 200) {
                             setData(prevState => prevState.filter(item => item.id !== id))
@@ -41,11 +52,47 @@ function Home() {
         })
     }
 
-    const editItem = (id) => {
-        alert(id)
-    }
+    const handleEdit = (e) => {
+        e.preventDefault()
 
-    console.log("selectedRow", selectedRow);
+        const formData = new FormData(e.target)
+        const data = {}
+
+        for (const [key, value] of formData.entries()) {
+            // console.log(key, value);
+            data[key] = value
+        }
+
+        if (!data.fullname) {
+            toast.error('Ad daxil edin', toast_config);
+            return
+        }
+
+        console.log("data", data);
+
+        // request to backend
+        axios.put(`${apiUrl}/users/${selectedRow.id}`, {
+          fullname:  data.fullname
+        }).then(resp => {
+            console.log("edit result", resp);
+            if (resp.status === 200) {
+                toast.success('Uğurla redakdə edildi.', toast_config);
+                setIsOpenEditModal(false)
+                setData(prevState => {
+                    const selectedItem = prevState.find(x=>x.id === selectedRow.id)
+
+                    console.log("selectedItem old", selectedItem);
+
+                    selectedItem.fullname = data.fullname
+
+                    console.log("selectedItem new", selectedItem);
+
+                    return prevState
+                })
+            }
+        })
+
+    }
 
     return (
         <div className="container">
@@ -100,24 +147,28 @@ function Home() {
                         isOpen={isOpenEditModal}
                         toggle={() => setIsOpenEditModal(false)}
                     >
-                        <ModalHeader toggle={() => setIsOpenEditModal(false)}>Modal title</ModalHeader>
-                        <ModalBody>
-                            {
-                                selectedRow.fullname
-                            }
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={() => setIsOpenEditModal(false)}>
-                                Do Something
-                            </Button>{' '}
-                            <Button color="secondary" onClick={() => setIsOpenEditModal(false)}>
-                                Cancel
-                            </Button>
-                        </ModalFooter>
+                        <ModalHeader toggle={() => setIsOpenEditModal(false)}>Redakdə et</ModalHeader>
+                        <Form onSubmit={e => handleEdit(e)}>
+                            <ModalBody>
+                                <Input
+                                    name='fullname'
+                                    // value={selectedRow.fullname}
+                                    defaultValue={selectedRow.fullname}
+                                />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button type='submit' color="primary">
+                                    Yadda saxla
+                                </Button>{' '}
+                                <Button type='button' color="secondary" onClick={() => setIsOpenEditModal(false)}>
+                                    İmtina
+                                </Button>
+                            </ModalFooter>
+                        </Form>
                     </Modal>
 
             }
-        </div>
+        </div >
     )
 }
 
