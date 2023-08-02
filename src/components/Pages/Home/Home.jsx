@@ -15,12 +15,14 @@ import axios from 'axios'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import { toast } from 'react-toastify'
 import { apiUrl, toast_config } from '../../../config'
+import { Link } from 'react-router-dom'
 
 function Home() {
 
     const [data, setData] = useState([])
     const [isOpenEditModal, setIsOpenEditModal] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
+    const [isOpenCreateModal, setIsOpenCreateModal] = useState(false)
 
     useEffect(() => {
         axios.get("http://localhost:3000/users").then(res => {
@@ -55,6 +57,8 @@ function Home() {
     const handleEdit = (e) => {
         e.preventDefault()
 
+        console.log(e);
+
         const formData = new FormData(e.target)
         const data = {}
 
@@ -63,23 +67,23 @@ function Home() {
             data[key] = value
         }
 
+        console.log("data", data);
+
         if (!data.fullname) {
-            toast.error('Ad daxil edin', toast_config);
+            toast.error("Ad daxil edilməyib", toast_config)
             return
         }
 
-        console.log("data", data);
-
         // request to backend
         axios.put(`${apiUrl}/users/${selectedRow.id}`, {
-          fullname:  data.fullname
+            fullname: data.fullname
         }).then(resp => {
             console.log("edit result", resp);
             if (resp.status === 200) {
                 toast.success('Uğurla redakdə edildi.', toast_config);
                 setIsOpenEditModal(false)
                 setData(prevState => {
-                    const selectedItem = prevState.find(x=>x.id === selectedRow.id)
+                    const selectedItem = prevState.find(x => x.id === selectedRow.id)
 
                     console.log("selectedItem old", selectedItem);
 
@@ -94,6 +98,18 @@ function Home() {
 
     }
 
+    const addUser = () => {
+
+        setIsOpenCreateModal(true)
+
+        // axios.post("http://localhost:3000/users", {
+        //     id: Date.now(),
+        //     fullname: "Rufet Rzayev"
+        // }).then(res => {
+        //     console.log("new user resp", res);
+        // })
+    }
+
     return (
         <div className="container">
             <div className='home-wrapper'>
@@ -104,43 +120,60 @@ function Home() {
                                 Melumat yoxdur
                             </Alert>
                             :
-                            <Table hover>
-                                <tbody>
-                                    {
-                                        data.map((item, index) => (
-                                            <tr key={item.id}>
-                                                <td>{index + 1}</td>
-                                                <td>{item.fullname}</td>
-                                                <td>
-                                                    <Button
+                            <div>
+                                <Button
+                                    color='success'
+                                    className='mb-4'
+                                    onClick={addUser}
+                                >
+                                    Add User
+                                </Button>
+                                <Table hover>
+                                    <tbody>
+                                        {
+                                            data.map((item, index) => (
+                                                <tr key={item.id}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{item.fullname}</td>
+                                                    <td>
+                                                        {/* <Button
                                                         color='primary'
                                                     >
                                                         Ətraflı
-                                                    </Button>
-                                                    <Button
-                                                        color='success'
-                                                        onClick={() => {
-                                                            setIsOpenEditModal(true)
-                                                            setSelectedRow(item)
-                                                        }}
-                                                    >
-                                                        Redakdə et
-                                                    </Button>
-                                                    <Button
-                                                        color='danger'
-                                                        onClick={() => deleteItem(item.id)}
-                                                    >
-                                                        Sil
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    }
-                                </tbody>
-                            </Table>
+                                                    </Button> */}
+                                                        <Link
+                                                            to={`/user/${item.id}`}
+                                                            className='btn btn-primary'
+                                                        >
+                                                            Ətraflı
+                                                        </Link>
+                                                        <Button
+                                                            color='success'
+                                                            onClick={() => {
+                                                                setIsOpenEditModal(true)
+                                                                setSelectedRow(item)
+                                                            }}
+                                                        >
+                                                            Redakdə et
+                                                        </Button>
+                                                        <Button
+                                                            color='danger'
+                                                            onClick={() => deleteItem(item.id)}
+                                                        >
+                                                            Sil
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </Table>
+                            </div>
+
                     }
                 </ProCard>
             </div>
+            {/* edit modal */}
             {
                 !selectedRow ? "" :
                     <Modal
@@ -157,7 +190,10 @@ function Home() {
                                 />
                             </ModalBody>
                             <ModalFooter>
-                                <Button type='submit' color="primary">
+                                <Button
+                                    type='submit'
+                                    color="primary"
+                                >
                                     Yadda saxla
                                 </Button>{' '}
                                 <Button type='button' color="secondary" onClick={() => setIsOpenEditModal(false)}>
@@ -168,6 +204,26 @@ function Home() {
                     </Modal>
 
             }
+            {/* create modal */}
+            <Modal
+                isOpen={isOpenCreateModal}
+                toggle={() => setIsOpenCreateModal(false)}
+            >
+                <ModalHeader toggle={() => setIsOpenCreateModal(false)}>İstifadəçi əlavə et</ModalHeader>
+                {/* <Form onSubmit={ }>
+                    <ModalBody>
+
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={() => setIsOpenCreateModal(false)}>
+                            Do Something
+                        </Button>{' '}
+                        <Button color="secondary" onClick={() => setIsOpenCreateModal(false)}>
+                            Cancel
+                        </Button>
+                    </ModalFooter>
+                </Form> */}
+            </Modal>
         </div >
     )
 }
